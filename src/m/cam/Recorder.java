@@ -1,21 +1,19 @@
 package m.cam;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
-
-import com.coremedia.iso.boxes.Container;
-import com.googlecode.mp4parser.FileDataSourceImpl;
-import com.googlecode.mp4parser.authoring.Movie;
-import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
-import com.googlecode.mp4parser.authoring.tracks.H264TrackImpl;
-
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaFormat;
+import com.coremedia.iso.boxes.Container;
+import com.googlecode.mp4parser.FileDataSourceImpl;
+import com.googlecode.mp4parser.authoring.Movie;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.tracks.H264TrackImpl;
 
 public class Recorder implements PreviewCallback {
 	public static final int WIDTH = 1280;
@@ -24,6 +22,7 @@ public class Recorder implements PreviewCallback {
 	private MediaCodec encoder;
 	private long startTime;
 	private BufferInfo bufferInfo;
+	private String path;
 	private FileOutputStream fos;
 	private byte[] buff;
 	
@@ -40,9 +39,10 @@ public class Recorder implements PreviewCallback {
 		encoder.start();
 		
 		try {
-			fos = new FileOutputStream("/sdcard/hhhh.h264");
+			path = "/sdcard/" + System.currentTimeMillis();
+			fos = new FileOutputStream(path + ".h264");
 			buff = new byte[WIDTH * HEIGHT * 4];
-		} catch (FileNotFoundException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
@@ -98,13 +98,15 @@ public class Recorder implements PreviewCallback {
 			encoder.release();
 			fos.close();
 			
-			H264TrackImpl track = new H264TrackImpl(new FileDataSourceImpl("/sdcard/hhhh.h264"), "eng", 25, 1);
+			H264TrackImpl track = new H264TrackImpl(new FileDataSourceImpl(path + ".h264"), "eng", 25, 1);
 			Movie movie = new Movie();
 			movie.addTrack(track);
 			Container container = new DefaultMp4Builder().build(movie);
-			fos = new FileOutputStream("/sdcard/hhhh.mp4");
+			fos = new FileOutputStream(path + ".mp4");
 			container.writeContainer(fos.getChannel());
 			fos.close();
+			
+			(new File(path + ".h264")).delete();
 		} catch(Throwable t) {
 			t.printStackTrace();
 		}
