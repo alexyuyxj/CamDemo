@@ -73,7 +73,7 @@ public class CamService extends Service implements OnTouchListener, Callback {
 		
 		sv = new SurfaceView(context);
 		sv.getHolder().addCallback(this);
-		rl.addView(sv, new RelativeLayout.LayoutParams(1, 1));
+		rl.addView(sv, new RelativeLayout.LayoutParams(params.width, params.height));
 	}
 	
 	public boolean onTouch(View v, MotionEvent event) {
@@ -99,7 +99,7 @@ public class CamService extends Service implements OnTouchListener, Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		Parameters parameters = cam.getParameters();
 		parameters.setPreviewSize(Recorder.WIDTH, Recorder.HEIGHT);
-		parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
+		parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 		sv.requestLayout();
 
 		cam.setParameters(parameters);
