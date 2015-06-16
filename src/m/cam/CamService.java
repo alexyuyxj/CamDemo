@@ -73,7 +73,7 @@ public class CamService extends Service implements OnTouchListener, Callback {
 		
 		sv = new SurfaceView(context);
 		sv.getHolder().addCallback(this);
-		rl.addView(sv, new RelativeLayout.LayoutParams(params.width, params.height));
+		rl.addView(sv, new RelativeLayout.LayoutParams(1, 1));
 	}
 	
 	public boolean onTouch(View v, MotionEvent event) {
